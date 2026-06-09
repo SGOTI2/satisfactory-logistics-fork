@@ -20,6 +20,7 @@ import {
 import { useMemo } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 
+import { useRecipeMultiplier } from '@/games/gamesSlice';
 import {
   AllFactoryBuildings,
   AllFactoryBuildingsMap,
@@ -27,6 +28,7 @@ import {
 import { AllFactoryItemsMap } from '@/recipes/FactoryItem';
 import { AllFactoryRecipes, type FactoryRecipe } from '@/recipes/FactoryRecipe';
 import { isDefaultRecipe, isMAMRecipe } from '@/recipes/graph/SchematicGraph';
+import { applyRecipeMultiplier } from '@/recipes/recipeMultiplier';
 import { FactoryItemImage } from '@/recipes/ui/FactoryItemImage';
 import { SectionCard, StatCard } from '../components/StatCard';
 import { getEarliestTierForItem } from '../tiers/tierUnlocks';
@@ -201,6 +203,7 @@ function RecipeTable({
   highlightResource: string;
   type: 'product' | 'ingredient';
 }) {
+  const recipeMultiplier = useRecipeMultiplier();
   return (
     <Table striped highlightOnHover>
       <Table.Thead>
@@ -221,9 +224,12 @@ function RecipeTable({
             type === 'product'
               ? recipe.products.find(p => p.resource === highlightResource)
               : recipe.ingredients.find(i => i.resource === highlightResource);
-          const rate = relevantPart
-            ? (relevantPart.amount * 60) / recipe.time
-            : 0;
+          const baseAmount = relevantPart ? relevantPart.amount : 0;
+          const effectiveAmount =
+            type === 'ingredient' && relevantPart
+              ? applyRecipeMultiplier(baseAmount, recipeMultiplier)
+              : baseAmount;
+          const rate = relevantPart ? (effectiveAmount * 60) / recipe.time : 0;
 
           return (
             <Table.Tr key={recipe.id}>

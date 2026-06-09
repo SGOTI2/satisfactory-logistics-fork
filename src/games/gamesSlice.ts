@@ -9,6 +9,10 @@ import {
   FactoryPipelinesExclAlternates,
 } from '@/recipes/FactoryBuilding';
 import { AllFactoryRecipes } from '@/recipes/FactoryRecipe';
+import {
+  DEFAULT_POWER_CONSUMPTION_MULTIPLIER,
+  DEFAULT_RECIPE_MULTIPLIER,
+} from '@/recipes/recipeMultiplier';
 import type { ParsedSatisfactorySave } from '@/recipes/savegame/ParseSavegameMessages';
 import { STATIC_COLLECTIBLE_IDS } from '@/recipes/WorldCollectibles';
 import type {
@@ -417,6 +421,22 @@ export function setShowOutputFactoriesNodes(
   useStore.getState().updateGameSettings(state => {
     state.showOutputFactoriesNodes = value;
   });
+}
+
+export function useRecipeMultiplier(): number {
+  return useStore(
+    state =>
+      state.games.games[state.games.selected ?? '']?.settings
+        ?.recipeMultiplier ?? DEFAULT_RECIPE_MULTIPLIER,
+  );
+}
+
+export function usePowerConsumptionMultiplier(): number {
+  return useStore(
+    state =>
+      state.games.games[state.games.selected ?? '']?.settings
+        ?.powerConsumptionMultiplier ?? DEFAULT_POWER_CONSUMPTION_MULTIPLIER,
+  );
 }
 
 export function useGameSettingMaxPipeline() {

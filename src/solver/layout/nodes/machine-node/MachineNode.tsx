@@ -31,6 +31,10 @@ import { RepeatingNumber } from '@/core/intl/NumberFormatter';
 import { PercentageFormatter } from '@/core/intl/PercentageFormatter';
 import { useStore } from '@/core/zustand';
 import { useFactoryContext } from '@/FactoryContext';
+import {
+  usePowerConsumptionMultiplier,
+  useRecipeMultiplier,
+} from '@/games/gamesSlice';
 import { AllFactoryBuildingsMap } from '@/recipes/FactoryBuilding';
 import { AllFactoryItemsMap, type FactoryItem } from '@/recipes/FactoryItem';
 import type { FactoryItemId } from '@/recipes/FactoryItemId';
@@ -82,11 +86,17 @@ export const MachineNode = memo((props: IMachineNodeProps) => {
   const isDimmed = useIsNodeHighlighted(props.id) === false;
 
   const solverId = useFactoryContext();
+  const recipeMultiplier = useRecipeMultiplier();
+  const powerConsumptionMultiplier = usePowerConsumptionMultiplier();
 
   const nodeState = useStore(
     state => state.solvers.instances[solverId ?? '']?.nodes?.[props.id],
   );
-  const machineCalc = calculateMachineNodeBuildings(props.data, nodeState);
+  const machineCalc = calculateMachineNodeBuildings(
+    props.data,
+    nodeState,
+    powerConsumptionMultiplier,
+  );
   const overclock = machineCalc.overclock;
   const buildingsAmount = machineCalc.buildingsAmount;
   const amplifiedRate = machineCalc.amplifiedRate;
@@ -432,6 +442,7 @@ export const MachineNode = memo((props: IMachineNodeProps) => {
                     buildingsAmount={buildingsAmount}
                     overclock={editedOverclock}
                     amplifiedRate={amplifiedRate}
+                    recipeMultiplier={recipeMultiplier}
                     editable={props.selected}
                     onOverclockChange={setOverclockValue}
                   />

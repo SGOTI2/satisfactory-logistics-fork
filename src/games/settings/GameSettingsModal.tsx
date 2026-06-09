@@ -21,6 +21,7 @@ import { useGameAllowedBuildings, useGameSettings } from '@/games/gamesSlice';
 import { SettingSectionNavButton } from './SettingSectionNavButton';
 import { AvailableBuildingsSection } from './sections/AvailableBuildingsSection';
 import { GraphDisplaySection } from './sections/GraphDisplaySection';
+import { RecipeMultiplierSection } from './sections/RecipeMultiplierSection';
 import { TransportLimitsSection } from './sections/TransportLimitsSection';
 import { UsageHighlightingSection } from './sections/UsageHighlightingSection';
 import { SETTINGS_SECTIONS, type SectionId } from './settingsSections';
@@ -45,6 +46,7 @@ export function GameSettingsModal() {
   const [activeSection, setActiveSection] = useState<SectionId>('highlighting');
 
   const sectionRefs = useRef<Record<SectionId, HTMLDivElement | null>>({
+    recipes: null,
     highlighting: null,
     transport: null,
     graph: null,
@@ -125,6 +127,11 @@ export function GameSettingsModal() {
             }}
           >
             <Stack gap="md">
+              <RecipeMultiplierSection
+                ref={setRef('recipes')}
+                settings={settings}
+                onChange={onChange}
+              />
               <UsageHighlightingSection
                 ref={setRef('highlighting')}
                 settings={settings}

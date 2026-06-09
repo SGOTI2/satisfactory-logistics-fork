@@ -2,6 +2,7 @@ import { Group, Image, Stack, Table, Text } from '@mantine/core';
 import { groupBy, sum } from 'lodash';
 import { useMemo } from 'react';
 import { RepeatingNumber } from '@/core/intl/NumberFormatter';
+import { usePowerConsumptionMultiplier } from '@/games/gamesSlice';
 import { FactoryItemImage } from '@/recipes/ui/FactoryItemImage';
 import { OverclockImage } from '@/recipes/ui/OverclockImage';
 import { SomersloopImage } from '@/recipes/ui/SomsersloopImage';
@@ -16,6 +17,7 @@ export interface ISummaryBuildingsProps {
 
 export function SummaryBuildings(props: ISummaryBuildingsProps) {
   const { solution } = props;
+  const powerConsumptionMultiplier = usePowerConsumptionMultiplier();
 
   const groupedByBuilding = useMemo(
     () =>
@@ -27,6 +29,7 @@ export function SummaryBuildings(props: ISummaryBuildingsProps) {
               calculateMachineNodeBuildings(
                 node.data as IMachineNodeData,
                 solution.context.request.nodes?.[node.id],
+                powerConsumptionMultiplier,
               ),
             ),
           data => data.building.id,
@@ -35,7 +38,7 @@ export function SummaryBuildings(props: ISummaryBuildingsProps) {
         buildingId,
         data,
       })),
-    [solution],
+    [solution, powerConsumptionMultiplier],
   );
 
   return (

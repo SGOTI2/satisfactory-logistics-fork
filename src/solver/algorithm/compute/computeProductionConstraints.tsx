@@ -3,6 +3,7 @@ import { log } from '@/core/logger/log';
 import { AllFactoryBuildingsMap } from '@/recipes/FactoryBuilding';
 import { AllFactoryItemsMap } from '@/recipes/FactoryItem';
 import { getAllRecipesForItem } from '@/recipes/FactoryRecipe';
+import { applyRecipeMultiplier } from '@/recipes/recipeMultiplier';
 import { isWorldResource } from '@/recipes/WorldResources';
 import {
   type SolverContext,
@@ -65,8 +66,9 @@ export function computeProductionConstraints(
       variable: recipeEnergyVar,
     });
     // TODO No edge for now. We don't need it for minimization
+    const powerMultiplier = ctx.request.powerConsumptionMultiplier ?? 1;
     const energyConsumptionFactor =
-      building.averagePowerConsumption / mainProductAmount;
+      (building.averagePowerConsumption * powerMultiplier) / mainProductAmount;
 
     const somersloops = ctx.request?.nodes?.[mainProductVar]?.somersloops ?? 0;
 
@@ -186,7 +188,11 @@ export function computeProductionConstraints(
       for (const ingredient of recipe.ingredients) {
         const ingredientItem = AllFactoryItemsMap[ingredient.resource];
         const recipeIngredientVar = `i${ingredientItem.index}r${recipe.index}`;
-        const ingredientAmount = (ingredient.amount * 60) / recipe.time;
+        const multipliedAmount = applyRecipeMultiplier(
+          ingredient.amount,
+          ctx.request.recipeMultiplier ?? 1,
+        );
+        const ingredientAmount = (multipliedAmount * 60) / recipe.time;
         const factor = productAmount / ingredientAmount;
 
         ctx.constraints.push(

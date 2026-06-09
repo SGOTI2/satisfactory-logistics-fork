@@ -53,6 +53,8 @@ export interface SolverProductionRequest extends SolverRequest {
    * the request omits it (matches the migration default).
    */
   showOutputFactoriesNodes?: ShowOutputFactoriesNodesMode;
+  recipeMultiplier?: number;
+  powerConsumptionMultiplier?: number;
   nodes?: Record<string, SolverNodeState>;
 }
 

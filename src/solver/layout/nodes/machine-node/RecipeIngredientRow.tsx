@@ -2,6 +2,7 @@ import { NumberInput, Table, Text } from '@mantine/core';
 import { RepeatingNumber } from '@/core/intl/NumberFormatter';
 import { AllFactoryItemsMap } from '@/recipes/FactoryItem';
 import type { FactoryRecipe, RecipeIngredient } from '@/recipes/FactoryRecipe';
+import { applyRecipeMultiplier } from '@/recipes/recipeMultiplier';
 import { FactoryItemImage } from '@/recipes/ui/FactoryItemImage';
 import { roundOverclock } from './roundOverclock';
 
@@ -13,6 +14,7 @@ export const RecipeIngredientRow = ({
   buildingsAmount,
   overclock,
   amplifiedRate,
+  recipeMultiplier = 1,
   editable,
   onOverclockChange,
 }: {
@@ -23,11 +25,16 @@ export const RecipeIngredientRow = ({
   buildingsAmount: number;
   overclock: number;
   amplifiedRate: number;
+  recipeMultiplier?: number;
   editable?: boolean;
   onOverclockChange?: (overclock: number | string) => void;
 }) => {
   const item = AllFactoryItemsMap[ingredient.resource];
-  const baseRate = (ingredient.displayAmount * 60) / recipe.time;
+  const effectiveAmount =
+    type === 'Ingredients'
+      ? applyRecipeMultiplier(ingredient.displayAmount, recipeMultiplier)
+      : ingredient.displayAmount;
+  const baseRate = (effectiveAmount * 60) / recipe.time;
   const amountPerMinute = baseRate * overclock;
   return (
     <Table.Tr>
@@ -39,7 +46,7 @@ export const RecipeIngredientRow = ({
       </Table.Td>
       <Table.Td>
         <Text size="sm" fs="italic">
-          <RepeatingNumber value={ingredient.displayAmount} />
+          <RepeatingNumber value={effectiveAmount} />
         </Text>
       </Table.Td>
       <Table.Td>

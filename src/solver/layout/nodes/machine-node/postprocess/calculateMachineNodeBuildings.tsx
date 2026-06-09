@@ -11,6 +11,7 @@ function calculatePowerShards(overclock: number): number {
 export function calculateMachineNodeBuildings(
   data: IMachineNodeData,
   nodeState: SolverNodeState | null | undefined,
+  powerConsumptionMultiplier = 1,
 ) {
   const { recipe, value, originalValue, amplifiedValue } = data;
 
@@ -52,10 +53,12 @@ export function calculateMachineNodeBuildings(
   const normalPower =
     normalBuildings *
     building.powerConsumption *
+    powerConsumptionMultiplier *
     overclock ** building.powerConsumptionExponent;
   const boostedPower =
     boostedBuildings *
     building.powerConsumption *
+    powerConsumptionMultiplier *
     overclock ** building.somersloopPowerConsumptionExponent;
   const totalPower = normalPower + boostedPower;
 
