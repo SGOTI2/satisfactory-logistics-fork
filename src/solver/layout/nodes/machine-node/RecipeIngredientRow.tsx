@@ -32,7 +32,12 @@ export const RecipeIngredientRow = ({
   const item = AllFactoryItemsMap[ingredient.resource];
   const effectiveAmount =
     type === 'Ingredients'
-      ? applyRecipeMultiplier(ingredient.displayAmount, recipeMultiplier)
+      ? applyRecipeMultiplier(
+          ingredient.displayAmount,
+          recipeMultiplier,
+          recipe,
+          item.form,
+        )
       : ingredient.displayAmount;
   const baseRate = (effectiveAmount * 60) / recipe.time;
   const amountPerMinute = baseRate * overclock;
