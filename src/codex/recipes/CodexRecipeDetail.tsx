@@ -29,7 +29,10 @@ import {
   UnlockedByMap,
 } from '@/recipes/FactorySchematic';
 import { isDefaultRecipe, isMAMRecipe } from '@/recipes/graph/SchematicGraph';
-import { applyRecipeMultiplier } from '@/recipes/recipeMultiplier';
+import {
+  applyRecipeMultiplier,
+  isPackagerRecipe,
+} from '@/recipes/recipeMultiplier';
 import { FactoryItemImage } from '@/recipes/ui/FactoryItemImage';
 import { SectionCard, StatCard } from '../components/StatCard';
 
@@ -125,7 +128,7 @@ export function CodexRecipeDetail() {
 
         <SectionCard
           title={
-            recipeMultiplier !== 1 ? (
+            recipeMultiplier !== 1 && !isPackagerRecipe(recipe) ? (
               <Group gap="xs">
                 Recipe Flow
                 <Badge variant="light" color="cyan" size="sm">
@@ -150,10 +153,12 @@ export function CodexRecipeDetail() {
                 const effectiveAmount = applyRecipeMultiplier(
                   ing.amount,
                   recipeMultiplier,
+                  recipe,
                 );
                 const effectiveDisplayAmount = applyRecipeMultiplier(
                   ing.displayAmount,
                   recipeMultiplier,
+                  recipe,
                 );
                 const rate = (effectiveAmount * 60) / recipe.time;
                 const isModified = effectiveDisplayAmount !== ing.displayAmount;

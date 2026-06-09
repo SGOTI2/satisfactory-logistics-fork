@@ -1,9 +1,17 @@
+const PACKAGER_BUILDING_ID = 'Build_Packager_C';
+
 export function applyRecipeMultiplier(
   baseAmount: number,
   multiplier: number,
+  recipe?: { producedIn: string },
 ): number {
   if (multiplier === 1) return baseAmount;
+  if (recipe?.producedIn === PACKAGER_BUILDING_ID) return baseAmount;
   return Math.max(1, Math.round(baseAmount * multiplier));
+}
+
+export function isPackagerRecipe(recipe: { producedIn: string }): boolean {
+  return recipe.producedIn === PACKAGER_BUILDING_ID;
 }
 
 export const RECIPE_MULTIPLIER_OPTIONS = [

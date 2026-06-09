@@ -45,6 +45,7 @@ export function RecipeTooltip(props: IRecipeTooltipProps) {
                       (applyRecipeMultiplier(
                         ingredient.displayAmount,
                         recipeMultiplier,
+                        recipe,
                       ) *
                         60) /
                       recipe.time
