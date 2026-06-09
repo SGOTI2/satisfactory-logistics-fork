@@ -1,6 +1,7 @@
 import {
   IconBuildingFactory2,
   IconHighlight,
+  IconPercentage,
   IconRoute,
   IconVectorBezier2,
 } from '@tabler/icons-react';
@@ -8,7 +9,12 @@ import type { Ref } from 'react';
 import type { FormOnChangeHandler } from '@/core/form/useFormOnChange';
 import type { GameSettings } from '@/games/Game';
 
-export type SectionId = 'highlighting' | 'transport' | 'graph' | 'buildings';
+export type SectionId =
+  | 'recipes'
+  | 'highlighting'
+  | 'transport'
+  | 'graph'
+  | 'buildings';
 
 export interface SectionComponentProps {
   ref?: Ref<HTMLDivElement>;
@@ -25,6 +31,13 @@ export interface Section {
 }
 
 export const SETTINGS_SECTIONS: Section[] = [
+  {
+    id: 'recipes',
+    label: 'Cost Multipliers',
+    description: 'Recipe & power scaling',
+    icon: IconPercentage,
+    color: 'cyan',
+  },
   {
     id: 'highlighting',
     label: 'Usage Highlighting',

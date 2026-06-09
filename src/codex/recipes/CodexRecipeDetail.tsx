@@ -20,6 +20,7 @@ import {
 } from '@tabler/icons-react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 
+import { useRecipeMultiplier } from '@/games/gamesSlice';
 import { AllFactoryBuildingsMap } from '@/recipes/FactoryBuilding';
 import { AllFactoryItemsMap } from '@/recipes/FactoryItem';
 import { AllFactoryRecipesMap } from '@/recipes/FactoryRecipe';
@@ -28,12 +29,15 @@ import {
   UnlockedByMap,
 } from '@/recipes/FactorySchematic';
 import { isDefaultRecipe, isMAMRecipe } from '@/recipes/graph/SchematicGraph';
+import { applyRecipeMultiplier } from '@/recipes/recipeMultiplier';
 import { FactoryItemImage } from '@/recipes/ui/FactoryItemImage';
 import { SectionCard, StatCard } from '../components/StatCard';
 
 export function CodexRecipeDetail() {
   const { id } = useParams<{ id: string }>();
   const recipe = id ? AllFactoryRecipesMap[id] : undefined;
+
+  const recipeMultiplier = useRecipeMultiplier();
 
   if (!recipe) return <Navigate to="/codex/recipes" replace />;
 
@@ -119,7 +123,20 @@ export function CodexRecipeDetail() {
             )}
         </SimpleGrid>
 
-        <SectionCard title="Recipe Flow">
+        <SectionCard
+          title={
+            recipeMultiplier !== 1 ? (
+              <Group gap="xs">
+                Recipe Flow
+                <Badge variant="light" color="cyan" size="sm">
+                  {recipeMultiplier}x ingredients
+                </Badge>
+              </Group>
+            ) : (
+              'Recipe Flow'
+            )
+          }
+        >
           <Group
             gap="md"
             align="center"
@@ -130,7 +147,16 @@ export function CodexRecipeDetail() {
             <Stack gap="xs" align="center" miw={120}>
               {recipe.ingredients.map(ing => {
                 const item = AllFactoryItemsMap[ing.resource];
-                const rate = (ing.amount * 60) / recipe.time;
+                const effectiveAmount = applyRecipeMultiplier(
+                  ing.amount,
+                  recipeMultiplier,
+                );
+                const effectiveDisplayAmount = applyRecipeMultiplier(
+                  ing.displayAmount,
+                  recipeMultiplier,
+                );
+                const rate = (effectiveAmount * 60) / recipe.time;
+                const isModified = effectiveDisplayAmount !== ing.displayAmount;
                 return (
                   <Anchor
                     key={ing.resource}
@@ -150,8 +176,26 @@ export function CodexRecipeDetail() {
                             {item?.displayName ?? ing.resource}
                           </Text>
                           <Text size="xs" c="dimmed">
-                            {ing.displayAmount} (
-                            {rate % 1 === 0 ? rate : rate.toFixed(2)}/min)
+                            {isModified && (
+                              <Text
+                                span
+                                size="xs"
+                                td="line-through"
+                                c="dimmed"
+                                mr={4}
+                              >
+                                {ing.displayAmount}
+                              </Text>
+                            )}
+                            <Text
+                              span
+                              size="xs"
+                              c={isModified ? 'cyan' : undefined}
+                              fw={isModified ? 600 : undefined}
+                            >
+                              {effectiveDisplayAmount}
+                            </Text>{' '}
+                            ({rate % 1 === 0 ? rate : rate.toFixed(2)}/min)
                           </Text>
                         </Stack>
                       </Group>

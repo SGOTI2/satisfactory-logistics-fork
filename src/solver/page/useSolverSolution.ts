@@ -7,7 +7,11 @@ import {
   useFactoryInputsOutputs,
   useFactoryOutputConsumers,
 } from '@/factories/store/factoriesSelectors';
-import { useShowOutputFactoriesNodes } from '@/games/gamesSlice';
+import {
+  usePowerConsumptionMultiplier,
+  useRecipeMultiplier,
+  useShowOutputFactoriesNodes,
+} from '@/games/gamesSlice';
 import { isByproductNode } from '@/solver/algorithm/getSolutionNodes';
 import { isSolutionFound } from '@/solver/algorithm/solve/isSolutionFound';
 import { solveProduction, useHighs } from '@/solver/algorithm/solveProduction';
@@ -84,6 +88,8 @@ export const useSolverSolution = (id: string, mode: 'game' | 'standalone') => {
   const instance = usePathSolverInstance(id);
   const solverGameId = useSolverGameId(id);
   const showOutputFactoriesNodes = useShowOutputFactoriesNodes();
+  const recipeMultiplier = useRecipeMultiplier();
+  const powerConsumptionMultiplier = usePowerConsumptionMultiplier();
 
   // 1. Initialize solver instance and factory defaults if missing
   useEffect(() => {
@@ -119,6 +125,8 @@ export const useSolverSolution = (id: string, mode: 'game' | 'standalone') => {
       ...inputsOutputs,
       outputConsumers,
       showOutputFactoriesNodes,
+      recipeMultiplier,
+      powerConsumptionMultiplier,
       nodes: instance.nodes,
     });
     logger.log('Solved ->', solution);
@@ -142,6 +150,8 @@ export const useSolverSolution = (id: string, mode: 'game' | 'standalone') => {
     inputsOutputs,
     outputConsumers,
     showOutputFactoriesNodes,
+    recipeMultiplier,
+    powerConsumptionMultiplier,
     loading,
   ]);
 

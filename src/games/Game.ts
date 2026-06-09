@@ -56,6 +56,8 @@ export interface GameSettings {
   maxPipeline?: string;
   orthogonalEdges?: boolean;
   disableEdgeAnimation?: boolean;
+  recipeMultiplier?: number;
+  powerConsumptionMultiplier?: number;
   /**
    * Controls whether the solver graph displays "Output to factory X" nodes
    * representing this factory's outputs flowing to downstream consumer

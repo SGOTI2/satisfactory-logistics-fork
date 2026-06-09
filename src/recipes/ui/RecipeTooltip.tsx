@@ -2,8 +2,10 @@ import { Stack, Table, Text, Tooltip } from '@mantine/core';
 import type * as React from 'react';
 import { useCallback, useState } from 'react';
 import { RepeatingNumber } from '@/core/intl/NumberFormatter';
+import { useRecipeMultiplier } from '@/games/gamesSlice';
 import { AllFactoryItemsMap } from '@/recipes/FactoryItem';
 import { AllFactoryRecipesMap } from '@/recipes/FactoryRecipe';
+import { applyRecipeMultiplier } from '@/recipes/recipeMultiplier';
 import { FactoryItemImage } from './FactoryItemImage';
 
 export interface IRecipeTooltipProps {
@@ -13,6 +15,7 @@ export interface IRecipeTooltipProps {
 
 export function RecipeTooltip(props: IRecipeTooltipProps) {
   const recipe = AllFactoryRecipesMap[props.recipeId];
+  const recipeMultiplier = useRecipeMultiplier();
   const [label, setLabel] = useState<React.ReactNode>(null);
 
   const handleMouseEnter = useCallback(() => {
@@ -38,7 +41,14 @@ export function RecipeTooltip(props: IRecipeTooltipProps) {
                 </Table.Td>
                 <Table.Td>
                   <RepeatingNumber
-                    value={(ingredient.displayAmount * 60) / recipe.time}
+                    value={
+                      (applyRecipeMultiplier(
+                        ingredient.displayAmount,
+                        recipeMultiplier,
+                      ) *
+                        60) /
+                      recipe.time
+                    }
                   />
                   /min
                 </Table.Td>
@@ -69,7 +79,7 @@ export function RecipeTooltip(props: IRecipeTooltipProps) {
         </Table>
       </Stack>,
     );
-  }, [recipe]);
+  }, [recipe, recipeMultiplier]);
 
   if (label) {
     return (
