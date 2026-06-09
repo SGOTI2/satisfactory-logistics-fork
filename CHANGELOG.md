@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.15.0](https://github.com/rockfactory/satisfactory-logistics/compare/v0.14.2...v0.15.0) (2026-06-09)
+
+### Features
+
+* add 1.2 power and recipe multipliers settings ([a4bccc1](https://github.com/rockfactory/satisfactory-logistics/commit/a4bccc135ee80302bf65403ca5bd93cc90c72c81))
+
 ## [0.14.2](https://github.com/rockfactory/satisfactory-logistics/compare/v0.14.1...v0.14.2) (2026-05-10)
 
 ### Bug Fixes
