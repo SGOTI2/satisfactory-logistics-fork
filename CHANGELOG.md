@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/rockfactory/satisfactory-logistics/compare/v0.15.0...v0.15.1) (2026-06-09)
+
+### Bug Fixes
+
+* avoid rounding for liquid/gas ingredients ([dee7bd4](https://github.com/rockfactory/satisfactory-logistics/commit/dee7bd4594c8c0962cfe228ca17f6fcd9d0ed0e8))
+* packagers should not be multiplied ([1b83cb2](https://github.com/rockfactory/satisfactory-logistics/commit/1b83cb2f21dbb1221c1dbc9186a43c945e4b93a3))
+
 ## [0.15.0](https://github.com/rockfactory/satisfactory-logistics/compare/v0.14.2...v0.15.0) (2026-06-09)
 
 ### Features
