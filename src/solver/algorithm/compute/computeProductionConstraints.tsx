@@ -192,6 +192,7 @@ export function computeProductionConstraints(
           ingredient.amount,
           ctx.request.recipeMultiplier ?? 1,
           recipe,
+          ingredientItem.form,
         );
         const ingredientAmount = (multipliedAmount * 60) / recipe.time;
         const factor = productAmount / ingredientAmount;

@@ -1,13 +1,28 @@
 const PACKAGER_BUILDING_ID = 'Build_Packager_C';
 
+/**
+ * Applies the Satisfactory 1.2 "Recipe Parts Cost Multiplier" to a
+ * single ingredient amount. Three rules govern the result:
+ *
+ * 1. Packager recipes are exempt: the game never scales packaging or
+ *    unpackaging ingredients regardless of the multiplier.
+ * 2. Fluids and gases are scaled without rounding (e.g. 3 * 0.25 = 0.75 m3),
+ *    because fractional fluid amounts are valid in-game.
+ * 3. Solids are rounded to the nearest integer with a floor of 1, because
+ *    handcrafting requires whole items and zero-cost ingredients would break
+ *    recipes (e.g. 1 * 0.25 = 0.25, rounded to 0, floored to 1).
+ */
 export function applyRecipeMultiplier(
   baseAmount: number,
   multiplier: number,
   recipe?: { producedIn: string },
+  itemForm?: string,
 ): number {
   if (multiplier === 1) return baseAmount;
   if (recipe?.producedIn === PACKAGER_BUILDING_ID) return baseAmount;
-  return Math.max(1, Math.round(baseAmount * multiplier));
+  const scaled = baseAmount * multiplier;
+  if (itemForm === 'Liquid' || itemForm === 'Gas') return scaled;
+  return Math.max(1, Math.round(scaled));
 }
 
 export function isPackagerRecipe(recipe: { producedIn: string }): boolean {

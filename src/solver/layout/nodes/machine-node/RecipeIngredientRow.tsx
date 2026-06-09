@@ -36,6 +36,7 @@ export const RecipeIngredientRow = ({
           ingredient.displayAmount,
           recipeMultiplier,
           recipe,
+          item.form,
         )
       : ingredient.displayAmount;
   const baseRate = (effectiveAmount * 60) / recipe.time;

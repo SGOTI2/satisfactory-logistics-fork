@@ -154,11 +154,13 @@ export function CodexRecipeDetail() {
                   ing.amount,
                   recipeMultiplier,
                   recipe,
+                  item?.form,
                 );
                 const effectiveDisplayAmount = applyRecipeMultiplier(
                   ing.displayAmount,
                   recipeMultiplier,
                   recipe,
+                  item?.form,
                 );
                 const rate = (effectiveAmount * 60) / recipe.time;
                 const isModified = effectiveDisplayAmount !== ing.displayAmount;

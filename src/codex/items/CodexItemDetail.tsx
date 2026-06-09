@@ -227,7 +227,12 @@ function RecipeTable({
           const baseAmount = relevantPart ? relevantPart.amount : 0;
           const effectiveAmount =
             type === 'ingredient' && relevantPart
-              ? applyRecipeMultiplier(baseAmount, recipeMultiplier, recipe)
+              ? applyRecipeMultiplier(
+                  baseAmount,
+                  recipeMultiplier,
+                  recipe,
+                  AllFactoryItemsMap[highlightResource]?.form,
+                )
               : baseAmount;
           const rate = relevantPart ? (effectiveAmount * 60) / recipe.time : 0;
 
