@@ -1,5 +1,6 @@
 import { Group, Image, Stack, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { RepeatingNumber } from '@/core/intl/NumberFormatter';
 import { useStore } from '@/core/zustand';
 import { AllFactoryBuildingsMap } from '@/recipes/FactoryBuilding';
 import { AllFactoryItemsMap } from '@/recipes/FactoryItem';
@@ -10,7 +11,11 @@ import type {
 } from '@/recipes/savegame/ParseSavegameMessages';
 import { INFRASTRUCTURE_CATEGORIES } from '@/recipes/savegame/ParseSavegameMessages';
 import { FactoryItemImage } from '@/recipes/ui/FactoryItemImage';
-import { StaticWorldResourceNodesById } from '@/recipes/WorldResourceNodes';
+import {
+  type Purity,
+  StaticWorldResourceNodesById,
+} from '@/recipes/WorldResourceNodes';
+import { getExtractionRate, getExtractionUnit } from '../extraction';
 import type { Hit } from './hitTest';
 import classes from './InfrastructureHoverPopover.module.css';
 import {
@@ -90,6 +95,11 @@ export function InfrastructureHoverPopover({
     const overclockPct = showOverclock ? Math.round(hit.overclock * 100) : null;
     const showSomersloop = hit.somersloop > 0;
 
+    // Extracted resources should show their extraction rate regardless
+    // and a default overclock of 1.0 is assumed because water extractors have
+    // an overclock of NaN if left unset
+    const assumedOverclock = Number.isFinite(hit.overclock) ? hit.overclock : 1;
+
     // Extracted resource (miners / oil pumps / fracking / water pumps).
     // Water pumps point at `FGWaterVolume_*` ids that aren't in the
     // static node dataset, so we infer the resource from the typePath
@@ -99,11 +109,15 @@ export function InfrastructureHoverPopover({
     // extract — not the static dataset's pre-randomization resource.
     let extractedResourceId: string | null = null;
     let extractedResourceName: string | null = null;
-    let extractedPurity: string | null = null;
+    let extractedPurity: Purity | null = null;
+    let extractedRate: number | null = null;
+    let extractedUnit: string | null = null;
     if (hit.typePath.includes('Build_WaterPump')) {
       extractedResourceId = 'Desc_Water_C';
       extractedResourceName =
         AllFactoryItemsMap[extractedResourceId]?.displayName ?? 'Water';
+      extractedRate = 120 * assumedOverclock; // 120 m³/min base
+      extractedUnit = 'm³/min';
     } else if (hit.extractedNode) {
       const node = StaticWorldResourceNodesById[hit.extractedNode];
       if (node) {
@@ -114,7 +128,16 @@ export function InfrastructureHoverPopover({
           AllFactoryItemsMap[resource]?.displayName ??
           node.displayName ??
           resource;
-        extractedPurity = override?.purity ?? node.purity;
+        extractedPurity =
+          (override?.purity as Purity | undefined) ?? node.purity;
+        if (known) {
+          extractedRate = getExtractionRate(
+            known,
+            extractedPurity,
+            assumedOverclock * 100,
+          );
+          extractedUnit = getExtractionUnit(extractedResourceId);
+        }
       }
     }
 
@@ -158,11 +181,22 @@ export function InfrastructureHoverPopover({
               </Text>
             </Group>
           ) : null}
-          {showOverclock || showSomersloop ? (
+          {showOverclock || showSomersloop || extractedRate ? (
             <Text size="xs">
               {showOverclock ? `Overclock: ${overclockPct}%` : null}
               {showOverclock && showSomersloop ? ' · ' : null}
               {showSomersloop ? `Somersloop ×${hit.somersloop}` : null}
+              {extractedRate && (showOverclock || showSomersloop)
+                ? ' · '
+                : null}
+              {extractedRate ? (
+                <>
+                  <RepeatingNumber value={extractedRate} />
+                  <span className={'map-marker-popup__rates-unit'}>
+                    {extractedUnit}
+                  </span>
+                </>
+              ) : null}
             </Text>
           ) : null}
           <Text size="xs" c="dimmed">
