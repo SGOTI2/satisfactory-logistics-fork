@@ -48,6 +48,11 @@ const HARDCODED_CLEARANCE_CM: Record<string, ClearanceCm> = {
   // read as discreet dots at path joints instead of competing with the
   // spline itself.
   Build_VehiclePathNode_Default_C: { width: 100, length: 100, height: 100 },
+  Build_VehiclePath_Universal_C: { width: 100, length: 100, height: 100 },
+  Build_VehiclePath_Tractor_C: { width: 100, length: 100, height: 100 },
+  Build_VehiclePath_Truck_C: { width: 100, length: 100, height: 100 },
+  Build_VehiclePath_Explorer_C: { width: 100, length: 100, height: 100 },
+  Build_VehiclePath_FactoryCart_C: { width: 100, length: 100, height: 100 },
   Build_VehiclePathNode_DockingStation_C: {
     width: 400,
     length: 400,
